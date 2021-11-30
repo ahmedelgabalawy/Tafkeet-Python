@@ -1,10 +1,7 @@
-
-# هذا الكود منشور لله رب العالمين
 # استرشاد من
 # ASammour
 # amsammour[at]gmail[dot]com
 
-# لعل الله يغفرلى 
 # Author: Ahmed El Gabalawy
 # Ahmed.Gabalawy@gmail.com
 # ويمكنك نشر، أو نسخ، أو إعادة توزيع الكود حتى للأغراض التجارية
