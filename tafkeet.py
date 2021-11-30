@@ -8,13 +8,12 @@
 # Author: Ahmed El Gabalawy
 # Ahmed.Gabalawy@gmail.com
 # ويمكنك نشر، أو نسخ، أو إعادة توزيع الكود حتى للأغراض التجارية
-from math import modf
+
 import decimal
 
 # القيم الخاصة بقيم الاحاد
 
 ones = {
-    0: "صفر",
     1: "واحد",
     2: "اثنان",
     3: "ثلاثة",
@@ -101,23 +100,30 @@ trillions = {
 }
 
 currency = {
-    'eg': ('جنيها','قرشا')
+    'EGP': ('جنيها','قرشا'),
+    'SAR': ('ريال','هلله'),
+    'AED': ('درهم','فلسا'),
 }
 
 def oneTen(number):
     #  القيم الافتراضية
-    result = "صفر"
+    result :str 
+
     # من 0 إلى 12
     if int(number) <= 12:
-        result = ones[int(number)]
+        if int(number) == 0 :
+            result = 'صفر'
+        else :
+            result = ones[int(number)]
 
     #   إذا كان العدد أكبر من12 وأقل من 99
     #   يقوم بجلب القيمة الأولى من العشرات
     #   والثانية من الآحاد
 
     else:
-
-        if int(number[0]) == 1:
+        if int(number[1]) == 0:
+            result = tens[int(number[0])]
+        elif int(number[0]) == 1:
             result = ones[int(number[1])] + ' ' + tens[int(number[0])]
         else:
             result = ones[int(number[1])] + ' و ' + tens[int(number[0])]
@@ -126,7 +132,7 @@ def oneTen(number):
 
 
 def hundred(number):
-    result = ""
+    result :str
 
     # تحديد قيمة الرقم الأول
     first = number[0]
@@ -142,7 +148,7 @@ def hundred(number):
 
 
 def thousand(number):
-    result = ""
+    result :str
     if len(number) == 4:
         if number[0] == '1':
             result = thousands[1]
@@ -166,7 +172,7 @@ def thousand(number):
     return result
 
 def million(number):
-    result = ""
+    result :str
     if len(number) == 7:
         if number[0] == '1':
             result = millions[1]
@@ -190,7 +196,7 @@ def million(number):
     return result
     
 def billion(number):
-    result = ""
+    result :str
     if len(number) == 10:
         if number[0] == '1':
             result = billions[1]
@@ -213,24 +219,49 @@ def billion(number):
         
     return result
 
+def trillion(number):
+    result :str
+    if len(number) == 10:
+        if number[0] == '1':
+            result = trillions[1]
+        elif number[0] == '2' :
+            result = trillions[2]
+        else:
+            result = ones[int(number[0])] + ' ' + trillions[39]
+        if int(number[1:]) > 0 :
+            result = result + ' و ' + billion(number[1:])
+
+    elif len(number) == 11:
+        result = oneTen(number[0:2]) + ' ' + trillions[1199]
+        if int(number[2:]) > 0 :
+            result = result + ' و ' + billion(number[2:])
+
+    elif len(number) == 12:
+        result = hundred(number[0:3]) + ' ' + trillions[1199]
+        if int(number[3:]) > 0 :
+            result = result + ' و ' + billion(number[3:])
+        
+    return result
 
 def tafkeet(value: decimal):
+    """
+        Convert number to arabic text \n
+        Ex. tafkeet(123.24) -> فقط مائة و ثلاثة و عشرون جنيها و أربعة و عشرون قرشا
+    """
     
-    frac_val , val = modf(value)
+    # extract fraction two decimal only
+    frac_val = int(str(int(value * 100))[-2:])
     
-    # remove extra fraction
-    frac_val = int(round(frac_val,2) * 100)
-
     if frac_val > 0 :
         fraction = oneTen(str(frac_val))
 
-    number = str(int(val))
+    number = str(int(value))
 
     # متغير لتخزين النص المفقط بداخله
-    result = ""
+    result :str
 
     # التحقق من أن المتغير يحتوي أرقامًا فقط، وأقل من تسعة وتسعين تريليون
-    if len(number) >= 14:
+    if len(number) > 15:
         raise Exception('number is to big')
 
     # إذا كان العدد من 0 إلى 99
@@ -251,14 +282,13 @@ def tafkeet(value: decimal):
 
     elif len(number) <= 12:
          result = billion(number)
-         
+    
+    elif len(number) <= 15:
+         result = trillion(number)
+
     if frac_val == 0 :
-        return 'فقط ' + result + ' ' + currency["eg"][0]
+        return 'فقط ' + result + ' ' + currency["EGP"][0]
     else :
-        return 'فقط ' + result + ' ' + currency["eg"][0] + ' و ' + fraction + ' ' + currency["eg"][1]
-
-print(tafkeet(123.24))
+        return 'فقط ' + result + ' ' + currency["EGP"][0] + ' و ' + fraction + ' ' + currency["EGP"][1]
 
 
-
-# فقط مائة و ثلاثة و عشرون جنيها و أربعة و عشرون قرشا
